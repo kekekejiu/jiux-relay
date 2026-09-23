@@ -1,0 +1,48 @@
+{{define "gate.html"}}<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{{.Title}}</title>
+  <style>:root{--theme:{{.ThemeColor}};--theme-dark:{{.ThemeColor}}}</style>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="wrap" style="justify-content:center; align-items:center; min-height:100vh; padding-top:0; padding-bottom:0;">
+    <div class="card" style="width:100%;">
+      <p class="card-title" style="font-size:18px;">该页面已加密</p>
+      <p class="info-row" style="margin-bottom:18px;">
+        请输入密码 <strong style="color:var(--theme); font-size:18px;">{{.Password}}</strong> 进入
+      </p>
+      <form id="gate-form">
+        <div class="field">
+          <span class="ico">&#128274;</span>
+          <input id="gate-pwd" type="password" inputmode="numeric"
+                 placeholder="请输入密码" autocomplete="off" autofocus>
+        </div>
+        <p id="gate-msg" class="msg"></p>
+        <button class="btn" type="submit">访问</button>
+      </form>
+    </div>
+  </div>
+  <script src="/static/app.js"></script>
+  {{if and .ChatwootURL .ChatwootToken}}
+  <script>
+  (function(d,t) {
+    var BASE_URL={{.ChatwootURL}};
+    var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=BASE_URL+"/packs/js/sdk.js";
+    g.async = true;
+    s.parentNode.insertBefore(g,s);
+    g.onload=function(){
+      window.chatwootSDK.run({
+        websiteToken: {{.ChatwootToken}},
+        baseUrl: BASE_URL
+      })
+    }
+  })(document,"script");
+  </script>
+  {{end}}
+</body>
+</html>{{end}}

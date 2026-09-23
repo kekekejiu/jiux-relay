@@ -1,0 +1,188 @@
+{{define "admin_dashboard.html"}}<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>管理后台</title>
+  <link rel="stylesheet" href="/static/admin.css">
+</head>
+<body>
+  <div class="topbar">
+    <h1>发布页管理后台</h1>
+    <div>
+      <span class="user">{{.User}}</span>
+      <a class="btn sm gray" href="{{.Base}}/logout" style="margin-left:10px;">退出</a>
+    </div>
+  </div>
+
+  <div class="container">
+    {{if .Msg}}<div class="banner">{{.Msg}}</div>{{end}}
+
+    <!-- 线路管理 -->
+    <div class="panel">
+      <h2>&#128279; 线路管理（改完保存，用户刷新即生效）</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>排序</th><th>标题</th><th class="hide-sm">网址</th>
+            <th>状态</th><th class="hide-sm">点击</th><th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .Links}}
+          <tr>
+            <td>{{.Sort}}</td>
+            <td>{{.Title}}<div class="u hide-sm">{{.Remark}}</div></td>
+            <td class="hide-sm"><span class="u">{{.URL}}</span></td>
+            <td>{{if eq .Enabled 1}}<span class="tag on">启用</span>{{else}}<span class="tag off">停用</span>{{end}}</td>
+            <td class="hide-sm">{{.Clicks}}</td>
+            <td>
+              <div class="actions">
+                <button class="btn sm gray" type="button"
+                  onclick='editLink({{.ID}},{{.Title}},{{.URL}},{{.Remark}},{{.Sort}},{{.Enabled}})'>编辑</button>
+                <form method="post" action="{{$.Base}}/links/delete" onsubmit="return confirm('确定删除该线路？');" style="display:inline;">
+                  <input type="hidden" name="id" value="{{.ID}}">
+                  <button class="btn sm danger" type="submit">删</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {{else}}
+          <tr><td colspan="6" style="text-align:center;color:var(--muted);">暂无线路，请在下方添加</td></tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 新增/编辑线路 -->
+    <div class="panel">
+      <h2 id="form-title">&#10133; 添加线路</h2>
+      <form method="post" action="{{.Base}}/links/save">
+        <input type="hidden" name="id" id="f-id" value="0">
+        <div class="row">
+          <div class="col field-group">
+            <label>标题</label>
+            <input type="text" name="title" id="f-title" placeholder="移动 联通 国内入口一" required>
+          </div>
+          <div class="col field-group">
+            <label>排序（数字越小越靠前）</label>
+            <input type="number" name="sort" id="f-sort" value="0">
+          </div>
+        </div>
+        <div class="field-group">
+          <label>跳转网址（用户点击后 302 跳转，也用于延迟检测）</label>
+          <input type="url" name="url" id="f-url" placeholder="https://www.example.com" required>
+        </div>
+        <div class="row">
+          <div class="col field-group">
+            <label>备注（显示在标题下方）</label>
+            <input type="text" name="remark" id="f-remark" placeholder="此链接随时更新">
+          </div>
+          <div class="col field-group">
+            <label>状态</label>
+            <select name="enabled" id="f-enabled">
+              <option value="1">启用</option>
+              <option value="0">停用</option>
+            </select>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn" type="submit">保存</button>
+          <button class="btn gray" type="button" onclick="resetForm()">清空</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 全局设置 -->
+    <div class="panel">
+      <h2>&#9881;&#65039; 全局设置</h2>
+      <form method="post" action="{{.Base}}/settings">
+        <div class="row">
+          <div class="col field-group">
+            <label>站点标题</label>
+            <input type="text" name="site_title" value="{{index .Settings "site_title"}}">
+          </div>
+          <div class="col field-group">
+            <label>副标题徽章</label>
+            <input type="text" name="site_subtitle" value="{{index .Settings "site_subtitle"}}">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col field-group">
+            <label>访问密码（前台密码门）</label>
+            <input type="text" name="access_password" value="{{index .Settings "access_password"}}">
+          </div>
+          <div class="col field-group">
+            <label>主题色</label>
+            <input type="text" name="theme_color" value="{{index .Settings "theme_color"}}" placeholder="#10b981">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col field-group">
+            <label>联系邮箱</label>
+            <input type="text" name="contact_email" value="{{index .Settings "contact_email"}}">
+          </div>
+          <div class="col field-group">
+            <label>ICP 备案号（可空）</label>
+            <input type="text" name="icp" value="{{index .Settings "icp"}}">
+          </div>
+        </div>
+        <div class="field-group">
+          <label>底部版权信息（显示在页面底部，可空）</label>
+          <input type="text" name="copyright" value="{{index .Settings "copyright"}}" placeholder="Copyright © 2019-2026 本站版权所有">
+        </div>
+        <div class="field-group">
+          <label>温馨提示文案（每行一条，按回车换行）</label>
+          <textarea name="tips">{{index .Settings "tips"}}</textarea>
+        </div>
+        <div class="row">
+          <div class="col field-group">
+            <label>在线客服地址（Chatwoot，可空）</label>
+            <input type="text" name="chatwoot_base_url" value="{{index .Settings "chatwoot_base_url"}}" placeholder="https://chat.example.com">
+          </div>
+          <div class="col field-group">
+            <label>客服 websiteToken（可空）</label>
+            <input type="text" name="chatwoot_token" value="{{index .Settings "chatwoot_token"}}" placeholder="两项都填写才会启用客服">
+          </div>
+        </div>
+        <button class="btn" type="submit">保存设置</button>
+      </form>
+    </div>
+
+    <!-- 修改密码 -->
+    <div class="panel">
+      <h2>&#128273; 修改登录密码</h2>
+      <form method="post" action="{{.Base}}/password" onsubmit="return confirm('修改后需要重新登录，确定？');">
+        <div class="field-group" style="max-width:320px;">
+          <label>新密码（至少 6 位）</label>
+          <input type="password" name="new_password" minlength="6" required>
+        </div>
+        <button class="btn danger" type="submit">修改密码</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function editLink(id, title, url, remark, sort, enabled){
+      document.getElementById('f-id').value = id;
+      document.getElementById('f-title').value = title;
+      document.getElementById('f-url').value = url;
+      document.getElementById('f-remark').value = remark;
+      document.getElementById('f-sort').value = sort;
+      document.getElementById('f-enabled').value = String(enabled);
+      document.getElementById('form-title').innerHTML = '&#9999;&#65039; 编辑线路 #' + id;
+      window.scrollTo({top: document.getElementById('form-title').offsetTop - 70, behavior:'smooth'});
+    }
+    function resetForm(){
+      document.getElementById('f-id').value = 0;
+      document.getElementById('f-title').value = '';
+      document.getElementById('f-url').value = '';
+      document.getElementById('f-remark').value = '';
+      document.getElementById('f-sort').value = 0;
+      document.getElementById('f-enabled').value = '1';
+      document.getElementById('form-title').innerHTML = '&#10133; 添加线路';
+    }
+  </script>
+</body>
+</html>{{end}}

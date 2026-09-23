@@ -1,0 +1,23 @@
+{{define "blocked.html"}}<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>请在浏览器中打开</title>
+  <style>:root{--theme:{{.ThemeColor}}}</style>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="blocked">
+    <div class="arrow">&#11014;&#65039;</div>
+    <h2>请在浏览器中打开</h2>
+    <p>检测到您正在使用微信 / QQ 等内置浏览器，无法正常访问。</p>
+    <div class="steps">
+      <p>1. 点击右上角的 &#8943; 菜单按钮</p>
+      <p>2. 选择「在浏览器打开」/「在 Safari 中打开」</p>
+      <p>3. 即可正常访问本页面</p>
+    </div>
+  </div>
+</body>
+</html>{{end}}

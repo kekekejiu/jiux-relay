@@ -1,0 +1,22 @@
+# 数据库（含真实网址、管理员密码哈希，切勿提交）
+*.db
+*.db-shm
+*.db-wal
+
+# 编译产物
+relay
+relay.exe
+/dist/
+
+# 备份与临时文件
+*.bak
+*.bak.*
+*.bak-*
+*~
+.DS_Store
+
+# ACME 证书验证目录
+.well-known/
+
+# 宝塔面板生成
+.user.ini

@@ -1,0 +1,27 @@
+{{define "admin_login.html"}}<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>后台登录</title>
+  <link rel="stylesheet" href="/static/admin.css">
+</head>
+<body>
+  <div class="login-wrap">
+    <form class="login-card" method="post" action="{{.Base}}/login">
+      <h1>管理后台</h1>
+      {{if .Err}}<p class="err">{{.Err}}</p>{{end}}
+      <div class="field-group">
+        <label>用户名</label>
+        <input type="text" name="username" autocomplete="username" required autofocus>
+      </div>
+      <div class="field-group">
+        <label>密码</label>
+        <input type="password" name="password" autocomplete="current-password" required>
+      </div>
+      <button class="btn" type="submit" style="width:100%;">登录</button>
+    </form>
+  </div>
+</body>
+</html>{{end}}
