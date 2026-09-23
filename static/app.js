@@ -7,36 +7,6 @@
   }
 })();
 
-// 密码门提交
-function bindGate() {
-  var form = document.getElementById("gate-form");
-  if (!form) return;
-  var input = document.getElementById("gate-pwd");
-  var msg = document.getElementById("gate-msg");
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    msg.textContent = "";
-    var data = new FormData();
-    data.append("password", input.value);
-    fetch("/verify", { method: "POST", body: data })
-      .then(function (r) { return r.json(); })
-      .then(function (res) {
-        if (res.ok) {
-          location.reload();
-        } else {
-          msg.textContent = res.msg || "密码错误";
-          msg.className = "msg err";
-          input.value = "";
-          input.focus();
-        }
-      })
-      .catch(function () {
-        msg.textContent = "网络异常，请重试";
-        msg.className = "msg err";
-      });
-  });
-}
-
 // 延迟检测:图片探测法,避免 CORS
 function ping(host) {
   return new Promise(function (resolve) {
@@ -112,6 +82,5 @@ function escapeHtml(s) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  bindGate();
   loadLinks();
 });

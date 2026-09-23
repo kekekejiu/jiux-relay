@@ -22,7 +22,6 @@ func seedData() {
 	defaults := map[string]string{
 		"site_title":      "极速发布页",
 		"site_subtitle":   "最新永久发布页",
-		"access_password": "666",
 		"contact_email":   "your-email@example.com",
 		"icp":             "",
 		"copyright":       "Copyright © 2019-2026 本站版权所有",

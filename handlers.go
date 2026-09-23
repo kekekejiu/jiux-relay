@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 )
 
 func registerRoutes(mux *http.ServeMux, adminPath string) {
@@ -14,7 +13,6 @@ func registerRoutes(mux *http.ServeMux, adminPath string) {
 
 	// 前台
 	mux.HandleFunc("/", handleHome)
-	mux.HandleFunc("/verify", handleVerify)
 	mux.HandleFunc("/api/links", handleAPILinks)
 	mux.HandleFunc("/go/", handleRedirect)
 	mux.HandleFunc("/blocked", handleBlocked)
@@ -57,19 +55,7 @@ func handleHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 2) 密码门:未通过则只显示密码页(不暴露真实入口,挡爬虫)
-	if !gatePassed(r) {
-		render(w, "gate.html", map[string]any{
-			"Title":         s["site_title"],
-			"ThemeColor":    s["theme_color"],
-			"Password":      s["access_password"],
-			"ChatwootURL":   s["chatwoot_base_url"],
-			"ChatwootToken": s["chatwoot_token"],
-		})
-		return
-	}
-
-	// 3) 入口列表
+	// 2) 入口列表
 	render(w, "index.html", map[string]any{
 		"Title":         s["site_title"],
 		"Subtitle":      s["site_subtitle"],
@@ -83,31 +69,8 @@ func handleHome(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func handleVerify(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	// 限流:同 IP 1 分钟最多 10 次
-	if !loginLimiter.allow("gate:"+clientIP(r), 10, time.Minute) {
-		writeJSON(w, http.StatusTooManyRequests, map[string]any{"ok": false, "msg": "尝试过于频繁，请稍后再试"})
-		return
-	}
-	pwd := strings.TrimSpace(r.FormValue("password"))
-	if pwd != "" && pwd == getSetting("access_password") {
-		setCookie(w, gateCookie, "ok", 7*24*time.Hour)
-		writeJSON(w, http.StatusOK, map[string]any{"ok": true})
-		return
-	}
-	writeJSON(w, http.StatusOK, map[string]any{"ok": false, "msg": "密码错误"})
-}
-
-// handleAPILinks 前台拿线路列表(需已过密码门)
+// handleAPILinks 前台拿线路列表
 func handleAPILinks(w http.ResponseWriter, r *http.Request) {
-	if !gatePassed(r) {
-		writeJSON(w, http.StatusForbidden, map[string]any{"ok": false})
-		return
-	}
 	links := listLinks(true)
 	type item struct {
 		ID     int64  `json:"id"`
@@ -124,10 +87,6 @@ func handleAPILinks(w http.ResponseWriter, r *http.Request) {
 
 // handleRedirect /go/{id} -> 302 跳转到真实地址,并统计点击
 func handleRedirect(w http.ResponseWriter, r *http.Request) {
-	if !gatePassed(r) {
-		http.Redirect(w, r, "/", http.StatusFound)
-		return
-	}
 	idStr := strings.TrimPrefix(r.URL.Path, "/go/")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {

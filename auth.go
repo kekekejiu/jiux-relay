@@ -85,14 +85,8 @@ func cookieValid(r *http.Request, name string) (string, bool) {
 }
 
 const (
-	gateCookie = "relay_gate"  // 通过密码门
 	authCookie = "relay_admin" // 管理员登录
 )
-
-func gatePassed(r *http.Request) bool {
-	_, ok := cookieValid(r, gateCookie)
-	return ok
-}
 
 func adminUser(r *http.Request) (string, bool) {
 	return cookieValid(r, authCookie)

@@ -110,23 +110,17 @@
         </div>
         <div class="row">
           <div class="col field-group">
-            <label>访问密码（前台密码门）</label>
-            <input type="text" name="access_password" value="{{index .Settings "access_password"}}">
-          </div>
-          <div class="col field-group">
             <label>主题色</label>
             <input type="text" name="theme_color" value="{{index .Settings "theme_color"}}" placeholder="#10b981">
           </div>
-        </div>
-        <div class="row">
           <div class="col field-group">
             <label>联系邮箱</label>
             <input type="text" name="contact_email" value="{{index .Settings "contact_email"}}">
           </div>
-          <div class="col field-group">
-            <label>ICP 备案号（可空）</label>
-            <input type="text" name="icp" value="{{index .Settings "icp"}}">
-          </div>
+        </div>
+        <div class="field-group">
+          <label>ICP 备案号（可空）</label>
+          <input type="text" name="icp" value="{{index .Settings "icp"}}">
         </div>
         <div class="field-group">
           <label>底部版权信息（显示在页面底部，可空）</label>

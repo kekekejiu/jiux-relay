@@ -136,7 +136,7 @@ func (c *adminCtx) settingsSave(user string) {
 		return
 	}
 	c.r.ParseForm()
-	keys := []string{"site_title", "site_subtitle", "access_password", "contact_email", "icp", "tips", "theme_color", "copyright",
+	keys := []string{"site_title", "site_subtitle", "contact_email", "icp", "tips", "theme_color", "copyright",
 		"chatwoot_base_url", "chatwoot_token"}
 	for _, k := range keys {
 		if v := c.r.Form.Get(k); c.r.Form.Has(k) {
