@@ -27,9 +27,9 @@ func seedData() {
 		"copyright":       "Copyright © 2019-2026 本站版权所有",
 		"tips":            "推荐使用谷歌(Chrome)浏览器访问本站，速度更快；iPhone 建议使用 Safari 访问。\n如果记不住本站域名，请收藏该页地址，并分享给好朋友。\n1、电脑用户：按键盘 Ctrl+D 收藏本页。\n2、苹果手机：在浏览器点击分享，添加到个人收藏或主屏幕。\n3、安卓手机：点击菜单，添加到书签或主屏幕。",
 		"theme_color":     "#10b981",
-		// 在线客服(Chatwoot)。留空则前台不加载客服脚本。
-		"chatwoot_base_url": "",
-		"chatwoot_token":    "",
+		// 自定义嵌入代码：原样注入前台页面底部(</body>前)。
+		// 可粘贴任意在线客服/统计代码(Chatra、Crisp、Chatwoot、Google Analytics 等整段 HTML/JS)。留空则不注入。
+		"custom_head_html": "",
 	}
 	for k, v := range defaults {
 		db.Exec(`INSERT OR IGNORE INTO settings(k, v) VALUES(?, ?)`, k, v)

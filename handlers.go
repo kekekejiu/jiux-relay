@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"html/template"
 	"net/http"
 	"strconv"
 	"strings"
@@ -57,15 +58,15 @@ func handleHome(w http.ResponseWriter, r *http.Request) {
 
 	// 2) 入口列表
 	render(w, "index.html", map[string]any{
-		"Title":         s["site_title"],
-		"Subtitle":      s["site_subtitle"],
-		"ThemeColor":    s["theme_color"],
-		"Email":         s["contact_email"],
-		"ICP":           s["icp"],
-		"Tips":          s["tips"],
-		"Copyright":     s["copyright"],
-		"ChatwootURL":   s["chatwoot_base_url"],
-		"ChatwootToken": s["chatwoot_token"],
+		"Title":      s["site_title"],
+		"Subtitle":   s["site_subtitle"],
+		"ThemeColor": s["theme_color"],
+		"Email":      s["contact_email"],
+		"ICP":        s["icp"],
+		"Tips":       s["tips"],
+		"Copyright":  s["copyright"],
+		// 原样注入自定义代码(客服/统计等)，用 template.HTML 避免被转义
+		"CustomHTML": template.HTML(s["custom_head_html"]),
 	})
 }
 

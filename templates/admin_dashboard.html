@@ -130,15 +130,10 @@
           <label>温馨提示文案（每行一条，按回车换行）</label>
           <textarea name="tips">{{index .Settings "tips"}}</textarea>
         </div>
-        <div class="row">
-          <div class="col field-group">
-            <label>在线客服地址（Chatwoot，可空）</label>
-            <input type="text" name="chatwoot_base_url" value="{{index .Settings "chatwoot_base_url"}}" placeholder="https://chat.example.com">
-          </div>
-          <div class="col field-group">
-            <label>客服 websiteToken（可空）</label>
-            <input type="text" name="chatwoot_token" value="{{index .Settings "chatwoot_token"}}" placeholder="两项都填写才会启用客服">
-          </div>
+        <div class="field-group">
+          <label>自定义嵌入代码（可空）</label>
+          <textarea name="custom_head_html" rows="6" placeholder="粘贴在线客服/统计代码整段，支持 Chatra、Crisp、Chatwoot、Google Analytics 等。原样注入前台页面底部，留空则不加载。">{{index .Settings "custom_head_html"}}</textarea>
+          <p class="u" style="margin-top:6px;">⚠️ 此处代码会原样插入前台页面，请只粘贴你信任的客服/统计代码。</p>
         </div>
         <button class="btn" type="submit">保存设置</button>
       </form>
